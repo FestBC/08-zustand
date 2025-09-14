@@ -6,3 +6,9 @@ export interface Note {
     updatedAt: string,
     tag: "Todo" | "Work" | "Personal" | "Meeting" | "Shopping"
 }
+
+export interface NoteFormValues {
+    title: string,
+    content: string,
+    tag: "Todo" | "Work" | "Personal" | "Meeting" | "Shopping"
+}
