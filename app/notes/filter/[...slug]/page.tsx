@@ -1,3 +1,5 @@
+import { Metadata } from "next";
+
 import {
   QueryClient,
   HydrationBoundary,
@@ -12,7 +14,7 @@ interface Props {
   params: Promise<{ slug: string[] }>;
 }
 
-export async function generateMetadata({ params }: Props) {
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const tag: string = slug[0] === "All" ? "All" : slug[0];
 

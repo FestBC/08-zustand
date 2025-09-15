@@ -16,14 +16,6 @@ import { NoteFormValues } from "@/types/note";
 export default function NoteForm() {
     const formId = useId();
 
-    const queryClient = useQueryClient();
-    const mutation = useMutation({
-        mutationFn: async ({ title, content, tag }: NoteFormValues) => await createNote(title, content, tag),
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["notes"] });
-        }
-    });
-
     const { draft, setDraft, clearDraft } = useNoteDraftStore();
     
     const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -36,15 +28,23 @@ export default function NoteForm() {
     const router = useRouter();
     const handleClose = (): void => router.back();
 
+    const queryClient = useQueryClient();
+    const mutation = useMutation({
+        mutationFn: async ({ title, content, tag }: NoteFormValues) => await createNote(title, content, tag),
+        onSuccess: async () => {
+            await queryClient.invalidateQueries({ queryKey: ["notes"] });
+
+            clearDraft();
+            handleClose();
+        }
+    });
+
     const handleSubmit = (formData: FormData): void => {
         mutation.mutate({
             title: formData.get("title") as string,
             content: formData.get("content") as string,
             tag: formData.get("tag") as "Todo" | "Work" | "Personal" | "Meeting" | "Shopping"
         });
-
-        clearDraft();
-        handleClose();
     };
 
     return (
